@@ -1,13 +1,13 @@
 # MobilityTicketing: Lecture 3
-Compares four ways to produce daily captured revenue:
+Compares four ways to produce daily captured revenue.
+
+## Purpose
+Implement and compare four ways to produce daily captured revenue:
 1. a direct aggregate query
 2. a SQL function over the base tables
 3. a materialized view
 4. a trigger-maintained summary table
-The differences between the four ways to produce daily captured revenue are observable, explained, and tied to a recommendation.
-
-## Purpose
-Implement and compare a direct SQL query, a user-defined function, a materialized view and a trigger-maintained summary for daily captured revenue. Use the differences to decide where the responsibility belongs.
+The differences must be observable, explained, and tied to a recommendation. Use the differences to decide where the responsibility belongs.
 
 ## Tasks
 1. Run the reference revenue query and verify its result from the base tables.
@@ -27,18 +27,22 @@ Implement and compare a direct SQL query, a user-defined function, a materialize
 ## Files
 ### Init
 `001_relational_baseline.sql`
-- Contains initial tables for operators, routes, stops, route stops, and trips, from lecture 1
+- From lecture 1
+- Contains initial tables for operators, routes, stops, route stops, and trips
 
 `002_seed.sql`
+- From lecture 1
 - Contains initial seed data
 
 `010_ticketing_draft.sql`
+- From lecture 2
 - Extends the initial schema to support ticketing functionality, related to lecture 2
 - Adds capacity and reserved_seats to the existing trips table
 - Creates tables for products, users, tickets, payments, and validations
 - Additional constraints are intentionally left out
 
 `011_ticketing_seed.sql`
+- From lecture 2
 - Contains initial seed data related to ticketing
 
 ### Queries
@@ -80,7 +84,9 @@ Covered in the dossier:
 - Decision
 
 ## Setup and Execution
-> The database is available at `localhost:5432` with database `mobility`, user `mobility`, and password `mobility`.
+> Run the following commands from this directory
+
+The database is available at `localhost:5432` with database `mobility`, user `mobility`, and password `mobility`.
 
 ### Start Database
 ```bash

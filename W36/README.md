@@ -19,9 +19,11 @@ Strengthen the initial PostgreSQL schema for ticket purchase and validation. The
 ## Files
 ### Init
 `001_relational_baseline.sql`  
-- Contains initial tables for operators, routes, stops, route stops, and trips, from lecture 1
+- From lecture 1
+- Contains initial tables for operators, routes, stops, route stops, and trips
 
 `002_seed.sql`  
+- From lecture 1
 - Contains initial seed data
 
 `010_ticketing_draft.sql`  
@@ -35,7 +37,7 @@ Strengthen the initial PostgreSQL schema for ticket purchase and validation. The
 
 ### Migrations
 `011_ticketing_integrity.sql`
-- Adds constraints for the minimum invariants and requirements specified in the TODO
+- Adds constraints for the minimum invariants and requirements specified in the file
 
 ### Experiments
 `constraints_success_tests.sql`
@@ -92,7 +94,9 @@ Covered in the dossier:
 - Invariants that cannot be solved by a simple constraint
 
 ## Setup and Execution
-> The database is available at `localhost:5432` with database `mobility`, user `mobility`, and password `mobility`.
+> Run the following commands from this directory
+
+The database is available at `localhost:5432` with database `mobility`, user `mobility`, and password `mobility`.
 
 ### Start Database
 ```bash

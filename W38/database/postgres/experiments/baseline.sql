@@ -1,4 +1,6 @@
+-- =====================================================================================
 -- Verifies the baseline ticket data and product references before migration
+-- =====================================================================================
 
 \set ON_ERROR_STOP on
 select current_database();

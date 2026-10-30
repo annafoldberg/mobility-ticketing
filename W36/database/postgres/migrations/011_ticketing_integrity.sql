@@ -1,10 +1,35 @@
--- Adds constraints for the minimum invariants and requirements specified in the TODO
+-- =====================================================================================
+-- Adds constraints for the minimum invariants and requirements specified in this file
+-- -------------------------------------------------------------------------------------
+-- Completed:
+-- Add constraints for:
+-- - Product reference
+-- - Ticket-code identity
+-- - Status
+-- - Price
+-- - Currency
+-- - Validity window
+-- - Remaining foreign keys
+-- Decide how duplicated validations.ticket_code should be protected.
+-- Name every constraint so tests and later migrations can identify it.
+-- -------------------------------------------------------------------------------------
+-- Comments:
+-- I have generally not implemented constraints that I have identified personally
+-- but instead remained focused on implementing the minimum invariants to consider
+-- together with the constraints specified in this file.
+--
+-- validations.ticket_code is not unique because
+-- the same ticket may be validated multiple times.
+-- =====================================================================================
 
 begin;
 
--- Trip capacity cannot be negative
--- Reserved seats cannot be negative or greater than capacity
--- Status values must come from a known set
+-- =====================================================================================
+-- Trips
+-- - Trip capacity cannot be negative
+-- - Reserved seats cannot be negative or greater than capacity
+-- - Status values must come from a known set
+-- =====================================================================================
 alter table trips
     alter column capacity set not null,
     alter column reserved_seats set not null,
@@ -16,13 +41,16 @@ alter table trips
     add constraint trips_status_valid
         check (status in ('Scheduled', 'On-time', 'Delayed', 'Early', 'Cancelled'));
 
--- A ticket must refer to an existing trip
--- Ticket price cannot be negative
--- Ticket codes must support unambiguous lookup
--- A ticket validity end cannot be earlier than its start
--- ! A ticket must refer to an existing product
--- Currency must be present
--- Status values must come from a known set
+-- =====================================================================================
+-- Tickets
+-- - A ticket must refer to an existing trip
+-- - Ticket price cannot be negative
+-- - Ticket codes must support unambiguous lookup
+-- - A ticket validity end cannot be earlier than its start
+-- - ! A ticket must refer to an existing product
+-- - Currency must be present
+-- - Status values must come from a known set
+-- =====================================================================================
 alter table tickets
     alter column trip_id set not null,
     alter column product_code set not null,
@@ -47,12 +75,15 @@ alter table tickets
     add constraint tickets_status_valid
         check (status in ('Pending', 'Active', 'Validated', 'Cancelled', 'Expired'));
 
--- Payment amount cannot be negative
--- A payment must refer to an existing ticket
--- An external payment reference should not be recorded twice
--- if it represents one captured payment
--- Currency must be present
--- Status values must come from a known set
+-- =====================================================================================
+-- Payments
+-- - Payment amount cannot be negative
+-- - A payment must refer to an existing ticket
+-- - An external payment reference should not be recorded twice
+--   if it represents one captured payment
+-- - Currency must be present
+-- - Status values must come from a known set
+-- =====================================================================================
 alter table payments
     alter column ticket_id set not null,
     alter column amount set not null,
@@ -67,9 +98,12 @@ alter table payments
     add constraint payments_status_valid
         check (status in ('Pending', 'Captured', 'Declined'));
 
--- A validation must refer to an existing ticket
--- ! A validation’s ticket_id and ticket_code must identify the same ticket
--- ! Result values must come from a known set
+-- =====================================================================================
+-- Validations
+-- - A validation must refer to an existing ticket
+-- - ! A validation’s ticket_id and ticket_code must identify the same ticket
+-- - ! Result values must come from a known set
+-- =====================================================================================
 alter table validations
     alter column ticket_id set not null,
     alter column ticket_code set not null,
@@ -79,8 +113,11 @@ alter table validations
     add constraint validations_result_valid
         check (result in ('Accepted', 'Declined'));
 
--- Product price cannot be negative
--- Currency must be present
+-- =====================================================================================
+-- Products
+-- - Product price cannot be negative
+-- - Currency must be present
+-- =====================================================================================
 alter table products
     alter column price set not null,
     alter column currency set not null,

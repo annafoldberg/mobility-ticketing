@@ -1,18 +1,36 @@
+-- =====================================================================================
 -- Contains seed data
--- Adds route_stops rows after deciding the key
--- Adds two trips per route on the same service date
+-- -------------------------------------------------------------------------------------
+-- Completed:
+-- - Add route_stops rows after deciding the key
+-- - Add two trips per route on the same service date
+-- =====================================================================================
 
+-- =====================================================================================
+-- Operators
+-- Inserts two operators, OP-METRO and OP-BUS
+-- =====================================================================================
 insert into operators (id, name) values
     ('OP-METRO', 'City Metro'),
     ('OP-BUS', 'City Bus')
 on conflict do nothing;
 
+-- =====================================================================================
+-- Routes
+-- Inserts three routes:
+-- - LINE-5C managed by the OP-BUS operator
+-- - LINE-M2 and LINE-M1 managed by the OP-METRO operator
+-- =====================================================================================
 insert into routes (id, operator_id, city_id, mode, short_name) values
     ('LINE-M2', 'OP-METRO', 'CPH', 'metro', 'M2'),
     ('LINE-5C', 'OP-BUS', 'CPH', 'bus', '5C'),
     ('LINE-M1', 'OP-METRO', 'CPH', 'metro', 'M1')
 on conflict do nothing;
 
+-- =====================================================================================
+-- Stops
+-- Inserts 4 stops throughout Copenhagen
+-- =====================================================================================
 insert into stops (id, city_id, name) values
     ('STOP-NORREPORT', 'CPH', 'Nørreport'),
     ('STOP-KONGENS-NYTORV', 'CPH', 'Kongens Nytorv'),
@@ -20,6 +38,12 @@ insert into stops (id, city_id, name) values
     ('STOP-CENTRAL', 'CPH', 'Copenhagen Central Station')
 on conflict do nothing;
 
+-- =====================================================================================
+-- Route stops
+-- Inserts 3 stops along the LINE-M2 route
+-- Inserts 4 stops along the LINE-5C route
+-- Leaves LINE-M1 without stops
+-- =====================================================================================
 insert into route_stops (route_id, stop_id, stop_sequence) values
     ('LINE-M2', 'STOP-AIRPORT', 1),
     ('LINE-M2', 'STOP-NORREPORT', 2),
@@ -30,12 +54,16 @@ insert into route_stops (route_id, stop_id, stop_sequence) values
     ('LINE-5C', 'STOP-CENTRAL', 4)
 on conflict do nothing;
 
+-- =====================================================================================
+-- Trips
+-- Inserts 2 scheduled trips for the LINE-M2 route
+-- Inserts 2 scheduled trips for the LINE-5C route
+-- Inserts no scheduled trips for LINE-M1 to verify
+-- that query 3 includes routes with zero trips
+-- =====================================================================================
 insert into trips (id, route_id, service_date, scheduled_departure_utc, status) values
     ('TRIP-M2-001', 'LINE-M2', '2026-08-28', '2026-08-28 08:30:00+00', 'ON-TIME'),
     ('TRIP-M2-002', 'LINE-M2', '2026-08-28', '2026-08-28 12:30:00+00', 'ON-TIME'),
     ('TRIP-5C-001', 'LINE-5C', '2026-08-28', '2026-08-28 10:30:00+00', 'DELAYED'),
     ('TRIP-5C-002', 'LINE-5C', '2026-08-28', '2026-08-28 12:30:00+00', 'CANCELLED')
 on conflict do nothing;
-
--- Add route_stops rows after deciding the key.
--- Add at least two trips per route on the same service date.

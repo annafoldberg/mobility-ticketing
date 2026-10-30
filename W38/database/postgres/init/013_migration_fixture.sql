@@ -1,6 +1,11 @@
--- Inserts a ticket with a historical price intentionally different from the catalogue price
+-- =====================================================================================
+-- Inserts a ticket with a historical price
+-- intentionally different from the catalogue price
+-- =====================================================================================
 
+-- =====================================================================================
 -- Deliberately discounted historical price, different from the catalogue.
+-- =====================================================================================
 insert into tickets
 (id,user_id,trip_id,ticket_code,status,product_code,valid_from_utc,valid_to_utc,price,currency)
 values ('TICKET-3','USER-1','TRIP-M2-20260429-1200','CODE-DAY-0001','Active','DAY',

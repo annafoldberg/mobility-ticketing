@@ -1,5 +1,14 @@
--- Contains a query for calculating daily captured revenue and payment counts per operator
+-- =====================================================================================
+-- Contains a query for calculating daily captured revenue and
+-- payment counts per operator
+-- =====================================================================================
 
+-- =====================================================================================
+-- Daily captured revenue
+-- - Calculates total captured revenue and payment counts per operator and date
+-- - Includes only payments with Captured status
+-- - Calculates results directly from the underlying tables without storing them
+-- =====================================================================================
 select
     r.operator_id,
     p.created_utc::date as revenue_date,

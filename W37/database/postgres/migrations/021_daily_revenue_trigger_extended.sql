@@ -1,19 +1,23 @@
--- Contains an extended implementation of daily revenue tracking with triggers for payment inserts, updates, and deletes
+-- =====================================================================================
+-- Contains an extended implementation of daily revenue tracking
+-- with triggers for payment inserts, updates, and deletes
+-- -------------------------------------------------------------------------------------
+-- Extension based on the following analysis:
+-- - Corrections: Only INSERT operations are handled, therefore,
+--   if a payment changes, the summary is not corrected.
+-- - Refunds: As only INSERT operations are handled,
+--   and only Captured status is taken into account,
+--   if a ticket is refunded, it is currently not registered in the summary.
+-- - Deletes: Not handled, if a captured payment is deleted,
+--   its amount and count remain in the summary.
+-- - Initial backfill: Not handled, the trigger only handles new inserts.
+-- - Duplicate delivery: Not handled, if the same payment is inserted twice,
+--   the trigger adds it twice.
+-- =====================================================================================
 
--- Extension based on analysis below:
-
--- Corrections: Only INSERT operations are handled, therefore, if a payment changes,
--- the summary is not corrected.
-
--- Refunds: As only INSERT operations are handled, and only Captured status is taken into account,
--- if a ticket is refunded, it is currently not registered in the summary.
-
--- Deletes: Not handled, if a captured payment is deleted, its amount and count remain in the summary.
-
--- Initial backfill: Not handled, the trigger only handles new inserts.
-
--- Duplicate delivery: Not handled, if the same payment is inserted twice, the trigger adds it twice.
-
+-- =====================================================================================
+-- Daily revenue by operator
+-- =====================================================================================
 create table daily_revenue_by_operator (
     operator_id text not null references operators(id),
     revenue_date date not null,
@@ -22,9 +26,15 @@ create table daily_revenue_by_operator (
     primary key (operator_id, revenue_date)
 );
 
--- Provided trigger (INSERT INTO)
--- Extended to cover:
--- Duplicate delivery: Not handled, if the same payment is inserted twice, the trigger adds it twice.
+-- =====================================================================================
+-- INSERT trigger
+-- - Adds newly captured payments to the daily revenue summary
+-- - Updates existing summaries when payments belong to the same operator and date
+-- -------------------------------------------------------------------------------------
+-- Original limitation:
+-- - Duplicate delivery: Not handled, if the same payment is inserted twice,
+--   the trigger adds it twice.
+-- =====================================================================================
 create or replace function add_inserted_payment_to_daily_revenue()
 returns trigger
 language plpgsql
@@ -62,12 +72,19 @@ after insert on payments
 for each row
 execute function add_inserted_payment_to_daily_revenue();
 
--- New trigger: UPDATE
--- Covers:
--- Corrections: Only INSERT operations are handled, therefore, if a payment changes,
--- the summary is not corrected.
--- Refunds: As only INSERT operations are handled, and only Captured status is taken into account,
--- if a ticket is refunded, it is currently not registered in the summary.
+-- =====================================================================================
+-- UPDATE trigger
+-- - Removes the previous contribution of a captured payment
+-- - Adds the updated contribution if the payment has Captured status
+-- - Handles changes to payment amounts, dates, ticket references, and statuses
+-- -------------------------------------------------------------------------------------
+-- Original limitations:
+-- - Corrections: Only INSERT operations are handled, therefore,
+--   if a payment changes, the summary is not corrected.
+-- - Refunds: As only INSERT operations are handled,
+--   and only Captured status is taken into account,
+--   if a ticket is refunded, it is currently not registered in the summary.
+-- =====================================================================================
 create or replace function update_payment_in_daily_revenue()
 returns trigger
 language plpgsql
@@ -122,8 +139,15 @@ after update on payments
 for each row
 execute function update_payment_in_daily_revenue();
 
--- New trigger: DELETE
--- Deletes: Not handled, if a captured payment is deleted, its amount and count remain in the summary.
+-- =====================================================================================
+-- DELETE trigger
+-- - Removes deleted captured payments from the daily revenue summary
+-- - Leaves the summary unchanged when deleted payments were not captured
+-- -------------------------------------------------------------------------------------
+-- Original limitation:
+-- - Deletes: Not handled, if a captured payment is deleted,
+-- its amount and count remain in the summary.
+-- =====================================================================================
 create or replace function delete_payment_from_daily_revenue()
 returns trigger
 language plpgsql
@@ -158,6 +182,8 @@ after delete on payments
 for each row
 execute function delete_payment_from_daily_revenue();
 
--- None cover:
--- Initial backfill: Not handled, the trigger only handles new inserts.
--- This is more appropriate for a query than a trigger.
+-- =====================================================================================
+-- Remaining limitations:
+-- - Initial backfill: Not handled, the trigger only handles new inserts.
+--   This is more appropriate for a query than a trigger.
+-- =====================================================================================

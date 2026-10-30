@@ -14,18 +14,22 @@ Give products stable IDs without breaking existing tickets or the application co
 ## Files
 ### Init
 `001_relational_baseline.sql`
+- From lecture 1
 - Contains initial tables for operators, routes, stops, route stops, and trips, from lecture 1
 
 `002_seed.sql`
+- From lecture 1
 - Contains initial seed data
 
 `010_ticketing_draft.sql`
+- From lecture 2
 - Extends the initial schema to support ticketing functionality, related to lecture 2
 - Adds capacity and reserved_seats to the existing trips table
 - Creates tables for products, users, tickets, payments, and validations
 - Additional constraints are added later
 
 `011_ticketing_seed.sql`
+- From lecture 2
 - Contains initial seed data related to ticketing
 
 `012_completed_integrity.sql`
@@ -110,7 +114,9 @@ Covered in the dossier:
         - Anything destructive
 
 ## Setup and Execution
-> The database is available at `localhost:5432` with database `mobility`, user `mobility`, and password `mobility`.
+> Run the following commands from this directory
+
+The database is available at `localhost:5432` with database `mobility`, user `mobility`, and password `mobility`.
 
 ### Start Database
 ```bash

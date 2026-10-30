@@ -1,6 +1,11 @@
+-- =====================================================================================
 -- Contains a completed set of integrity constraints for ticketing data
+-- =====================================================================================
 
--- Completed teaching baseline for lecture 4. These are explicit fixture policies.
+-- =====================================================================================
+-- Completed teaching baseline for lecture 4.
+-- These are explicit fixture policies.
+-- =====================================================================================
 begin;
 alter table trips
  alter column capacity set not null,

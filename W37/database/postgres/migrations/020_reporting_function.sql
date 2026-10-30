@@ -1,7 +1,14 @@
--- Contains a function for calculating daily captured revenue and payment count for an operator
+-- =====================================================================================
+-- Contains a function for calculating daily captured revenue
+-- and payment count for an operator
+-- =====================================================================================
 
--- A function centralises the read logic but does not store an aggregate result.
-
+-- =====================================================================================
+-- Captured revenue for day
+-- - Calculates the total captured revenue and number of captured payments
+-- - Filters payments by operator, date, and Captured status
+-- - Centralises the read logic without storing an aggregate result
+-- =====================================================================================
 create or replace function captured_revenue_for_day(
     requested_operator_id text,
     requested_date date

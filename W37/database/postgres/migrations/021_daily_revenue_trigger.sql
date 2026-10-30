@@ -1,8 +1,19 @@
--- Contains a table and trigger for maintaining daily captured revenue and payment counts per operator
+-- =====================================================================================
+-- Contains a table and trigger for maintaining daily captured revenue
+-- and payment counts per operator.
 -- Handles only payment inserts
+-- -------------------------------------------------------------------------------------
+-- Completed:
+-- - This is deliberately incomplete
+-- - Document the behaviour before extending it
+-- - Analysis and extension can be found in `021_daily_revenue_trigger_extended.sql`
+-- =====================================================================================
 
--- This is deliberately incomplete. Document the behaviour before extending it.
-
+-- =====================================================================================
+-- Daily revenue by operator
+-- - Stores daily captured revenue and payment counts for each operator
+-- - Uses (operator_id, revenue_date) as the composite primary key
+-- =====================================================================================
 create table daily_revenue_by_operator (
     operator_id text not null references operators(id),
     revenue_date date not null,
@@ -11,6 +22,11 @@ create table daily_revenue_by_operator (
     primary key (operator_id, revenue_date)
 );
 
+-- =====================================================================================
+-- INSERT function
+-- - Adds newly captured payments to the daily revenue summary
+-- - Updates existing summaries when payments belong to the same operator and date
+-- =====================================================================================
 create or replace function add_inserted_payment_to_daily_revenue()
 returns trigger
 language plpgsql
@@ -54,24 +70,11 @@ begin
 end;
 $$;
 
--- The trigger is run after a row is inserted into payments
+-- =====================================================================================
+-- INSERT trigger
+-- - Executes the function after a payment row is inserted
+-- =====================================================================================
 create trigger payments_daily_revenue_after_insert
 after insert on payments
 for each row
 execute function add_inserted_payment_to_daily_revenue();
-
--- TODO: analyse corrections, refunds, deletes, initial backfill, and duplicate delivery.
-
--- Corrections: Only INSERT operations are handled, therefore, if a payment changes,
--- the summary is not corrected.
-
--- Refunds: As only INSERT operations are handled, and only Captured status is taken into account,
--- if a ticket is refunded, it is currently not registered in the summary.
-
--- Deletes: Not handled, if a captured payment is deleted, its amount and count remain in the summary.
-
--- Initial backfill: Not handled, the trigger only handles new inserts.
-
--- Duplicate delivery: Not handled, if the same payment is inserted twice, the trigger adds it twice.
-
--- Do not add more trigger branches before documenting the behaviour.

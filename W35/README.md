@@ -45,7 +45,9 @@ Covered in the dossier:
 - State what the implementation proves and what remains unknown
 
 ## Setup and Execution
-> The database is available at `localhost:5432` with database `mobility`, user `mobility`, and password `mobility`.
+> Run the following commands from this directory
+
+The database is available at `localhost:5432` with database `mobility`, user `mobility`, and password `mobility`.
 
 ### Start Database
 ```bash

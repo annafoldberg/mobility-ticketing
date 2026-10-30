@@ -17,7 +17,6 @@ For materialized view, before and after refresh are split by `;`.
 One captured example where two approaches disagree is after the captured payment insert. Here, the base query returns 72/2 on the affected row, while the materialized view returned 36/1. This is because the query reads the current base data, while the materialized view only updates when refreshed.
 
 ## Side-effect trace
-
 For one `INSERT INTO payments`:
 
 1. Constraints/references checked:  
@@ -44,7 +43,6 @@ In PostgreSQL, triggers execute as part of the same transaction as the INSERT. T
 7. Application can observe:  
 After commit, the application can observe the new payment through the base query and function, and the updated trigger summary. The materialized view still returns its previous state until refresh.
 
-
 ## Responsibility matrix
 | Approach | Correctness | Freshness | Write cost | Read cost | Hidden side effects | Rebuildability | Operational complexity |
 |---|---|---|---|---|---|---|---|
@@ -63,7 +61,6 @@ The base query and function are current at query time. The trigger is performed 
 The base query and function need no rebuild because they do not store derived data. The trigger summary can be rebuilt by recalculating and backfilling it from the base tables. The materialized view can be rebuilt with `REFRESH MATERIALIZED VIEW daily_captured_revenue;`.
 
 ## Issue register
-
 **Issue:**  
 1. Data in the materialized view is stale.
 2. Trigger summary has no initial backfill.
@@ -80,7 +77,6 @@ The base query and function need no rebuild because they do not store derived da
 3. Refunds, corrections, or deletions could leave the summary inconsistent with the base data if not careful to cover every type of change.
 
 ## Decision
-
 **Chosen approach:**  
 I would suggest using the materialized view for reporting.
 
@@ -97,7 +93,6 @@ The materialized view is only current once refreshed.
 The materialized view can be rebuilt with `REFRESH MATERIALIZED VIEW daily_captured_revenue;`.
 
 ## SQL definitions
-
 - Base query: `base_revenue.sql`
 - Function: `020_reporting_function.sql`
 - Trigger summary: `021_daily_revenue_trigger_extended.sql`
